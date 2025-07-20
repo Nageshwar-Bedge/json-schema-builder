@@ -9,7 +9,7 @@ interface FieldRowProps {
   control: Control<SchemaFormData>;
   fieldIndex: number;
   onRemove: () => void;
-  fieldPath: string; // Allow any string path to support nesting
+  fieldPath: string;
   level?: number;
 }
 
@@ -44,7 +44,7 @@ const FieldRow: React.FC<FieldRowProps> = ({
 
         <div className="flex-shrink-0">
           <FieldTypeSelector
-            value={fieldType || 'string'} // fallback to avoid undefined
+            value={fieldType || 'string'}
             onChange={(type) => {
               setValue(`${fieldPath}.type` as any, type);
               if (type !== 'nested') {
