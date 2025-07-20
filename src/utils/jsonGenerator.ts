@@ -8,10 +8,10 @@ export const generateJsonFromSchema = (fields: SchemaField[]): Record<string, an
     
     switch (field.type) {
       case 'string':
-        result[field.name] = 'example string';
+        result[field.name] = 'String';
         break;
       case 'number':
-        result[field.name] = 42;
+        result[field.name] = 'Number';
         break;
       case 'nested':
         if (field.nested && field.nested.length > 0) {

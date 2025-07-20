@@ -21,7 +21,6 @@ const FieldRow: React.FC<FieldRowProps> = ({
 }) => {
   const { register, setValue } = useFormContext<SchemaFormData>();
 
-  // `useWatch` might return undefined at first render — we guard against it
   const fieldType = useWatch({
     control,
     name: `${fieldPath}.type` as any,
