@@ -1,5 +1,5 @@
 import React from 'react';
-import { Control, useWatch } from 'react-hook-form';
+import { useFormContext, useWatch, Control } from 'react-hook-form';
 import { Trash2, GripVertical } from 'lucide-react';
 import FieldTypeSelector from './FieldTypeSelector';
 import NestedFields from './NestedFields';
@@ -9,21 +9,23 @@ interface FieldRowProps {
   control: Control<SchemaFormData>;
   fieldIndex: number;
   onRemove: () => void;
-  fieldPath: string;
+  fieldPath: string; // Allow any string path to support nesting
   level?: number;
 }
 
-const FieldRow: React.FC<FieldRowProps> = ({ 
-  control, 
-  fieldIndex, 
-  onRemove, 
+const FieldRow: React.FC<FieldRowProps> = ({
+  control,
+  onRemove,
   fieldPath,
-  level = 1 
+  level = 1,
 }) => {
+  const { register, setValue } = useFormContext<SchemaFormData>();
+
+  // `useWatch` might return undefined at first render — we guard against it
   const fieldType = useWatch({
     control,
     name: `${fieldPath}.type` as any,
-  });
+  }) as 'string' | 'number' | 'nested' | undefined;
 
   return (
     <div className="group bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all duration-200">
@@ -34,7 +36,7 @@ const FieldRow: React.FC<FieldRowProps> = ({
 
         <div className="flex-1">
           <input
-            {...control.register(`${fieldPath}.name` as any)}
+            {...register(`${fieldPath}.name` as any)}
             placeholder="Enter field name"
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200"
           />
@@ -42,11 +44,11 @@ const FieldRow: React.FC<FieldRowProps> = ({
 
         <div className="flex-shrink-0">
           <FieldTypeSelector
-            value={fieldType}
+            value={fieldType || 'string'} // fallback to avoid undefined
             onChange={(type) => {
-              control.setValue(`${fieldPath}.type` as any, type);
+              setValue(`${fieldPath}.type` as any, type);
               if (type !== 'nested') {
-                control.setValue(`${fieldPath}.nested` as any, []);
+                setValue(`${fieldPath}.nested` as any, []);
               }
             }}
           />
@@ -62,11 +64,7 @@ const FieldRow: React.FC<FieldRowProps> = ({
       </div>
 
       {fieldType === 'nested' && (
-        <NestedFields
-          control={control}
-          fieldPath={fieldPath}
-          level={level}
-        />
+        <NestedFields control={control} fieldPath={fieldPath} level={level + 1} />
       )}
     </div>
   );

@@ -1,8 +1,8 @@
 import React from 'react';
 import JsonSchemaBuilder from './components/JsonSchemaBuilder';
 
-function App() {
+const App: React.FC = () => {
   return <JsonSchemaBuilder />;
-}
+};
 
 export default App;
